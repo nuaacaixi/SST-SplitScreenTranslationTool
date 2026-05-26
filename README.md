@@ -1,0 +1,2 @@
+# SST-SplitScreenTranslationTool
+在阅读英文文章时想同时查看原文，可以使用此插件，纯vibecoding有bug先受着吧
