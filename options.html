@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Translation Split View - Settings</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #1e1e2e;
+      color: #cdd6f4;
+      padding: 24px;
+      min-width: 320px;
+    }
+    h1 { font-size: 18px; margin-bottom: 20px; }
+    .field { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; color: #a6adc8; margin-bottom: 6px; }
+    select, input[type="range"] { width: 100%; }
+    select {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #45475a;
+      background: #313244;
+      color: #cdd6f4;
+      font-size: 14px;
+      outline: none;
+    }
+    .radio-group { display: flex; gap: 12px; }
+    .radio-group label { display: flex; align-items: center; gap: 4px; font-size: 14px; color: #cdd6f4; cursor: pointer; }
+    .ratio-display { text-align: center; font-size: 14px; margin-top: 4px; }
+    .saved { color: #a6e3a1; font-size: 12px; margin-left: 8px; opacity: 0; transition: opacity 0.3s; }
+    .saved.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <h1>Translation Split View <span class="saved" id="saved">Saved</span></h1>
+
+  <div class="field">
+    <label for="targetLang">Target language / 目标语言</label>
+    <select id="targetLang">
+      <option value="zh-CN">中文（简体）</option>
+      <option value="zh-TW">中文（繁体）</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="fr">Français</option>
+      <option value="de">Deutsch</option>
+      <option value="es">Español</option>
+      <option value="pt">Português</option>
+      <option value="ru">Русский</option>
+      <option value="ar">العربية</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>Default layout / 默认布局</label>
+    <div class="radio-group">
+      <label><input type="radio" name="layout" value="horizontal"> Horizontal / 左右</label>
+      <label><input type="radio" name="layout" value="vertical"> Vertical / 上下</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Translation position / 翻译位置</label>
+    <div class="radio-group">
+      <label><input type="radio" name="translatedFirst" value="true"> Left/Top / 左/上</label>
+      <label><input type="radio" name="translatedFirst" value="false"> Right/Bottom / 右/下</label>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="splitRatio">Default split ratio / 默认分割比例</label>
+    <input type="range" id="splitRatio" min="30" max="70" value="50">
+    <div class="ratio-display"><span id="ratioVal">50</span>%</div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
