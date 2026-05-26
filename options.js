@@ -2,7 +2,8 @@ const defaults = {
   targetLang: 'zh-CN',
   layout: 'horizontal',
   translatedFirst: true,
-  splitRatio: 50
+  splitRatio: 50,
+  scrollSync: false
 };
 
 function showSaved() {
@@ -16,7 +17,8 @@ function save() {
     targetLang: document.getElementById('targetLang').value,
     layout: document.querySelector('input[name="layout"]:checked').value,
     translatedFirst: document.querySelector('input[name="translatedFirst"]:checked').value === 'true',
-    splitRatio: parseInt(document.getElementById('splitRatio').value)
+    splitRatio: parseInt(document.getElementById('splitRatio').value),
+    scrollSync: document.getElementById('scrollSync').checked
   };
   chrome.storage.sync.set(prefs, showSaved);
 }
@@ -28,6 +30,7 @@ async function load() {
   document.querySelector('input[name="translatedFirst"][value="' + prefs.translatedFirst + '"]').checked = true;
   document.getElementById('splitRatio').value = prefs.splitRatio;
   document.getElementById('ratioVal').textContent = prefs.splitRatio;
+  document.getElementById('scrollSync').checked = prefs.scrollSync;
 }
 
 document.getElementById('splitRatio').addEventListener('input', function(e) {

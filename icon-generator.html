@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Icon Generator - Translation Split View</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 500px; margin: 40px auto; text-align: center; background: #1e1e2e; color: #cdd6f4; }
+  h1 { font-size: 18px; margin-bottom: 8px; }
+  p { color: #a6adc8; font-size: 13px; margin-bottom: 24px; }
+  .preview { display: flex; gap: 20px; justify-content: center; align-items: end; margin-bottom: 24px; }
+  .item { text-align: center; }
+  .item span { font-size: 11px; color: #a6adc8; display: block; margin-top: 6px; }
+  canvas { border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.3); image-rendering: auto; }
+  button {
+    padding: 12px 32px; font-size: 15px; cursor: pointer;
+    border: none; border-radius: 8px; background: #4A90D9; color: #fff; font-weight: 600;
+    transition: background 0.15s;
+  }
+  button:hover { background: #357ABD; }
+</style>
+</head>
+<body>
+<h1>Translation Split View</h1>
+<p>点击按钮下载三个尺寸的图标，然后覆盖到 <code>assets/</code> 目录</p>
+
+<div class="preview">
+  <div class="item"><canvas id="c16" width="16" height="16"></canvas><span>icon16.png</span></div>
+  <div class="item"><canvas id="c48" width="48" height="48"></canvas><span>icon48.png</span></div>
+  <div class="item"><canvas id="c128" width="128" height="128"></canvas><span>icon128.png</span></div>
+</div>
+
+<button onclick="downloadAll()">Download All Icons</button>
+
+<script>
+function drawIcon(ctx, w, h) {
+  ctx.clearRect(0, 0, w, h);
+
+  const pad = Math.max(1, Math.round(w * 0.06));
+  const r = Math.round(w * 0.18);
+  const x = pad, y = pad, iw = w - pad * 2, ih = h - pad * 2;
+
+  // Rounded rect path
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + iw - r, y);
+  ctx.quadraticCurveTo(x + iw, y, x + iw, y + r);
+  ctx.lineTo(x + iw, y + ih - r);
+  ctx.quadraticCurveTo(x + iw, y + ih, x + iw - r, y + ih);
+  ctx.lineTo(x + r, y + ih);
+  ctx.quadraticCurveTo(x, y + ih, x, y + ih - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+
+  // Shadow (only for larger sizes)
+  if (w >= 48) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.25)';
+    ctx.shadowBlur = w * 0.06;
+    ctx.shadowOffsetY = w * 0.03;
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.restore();
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + iw - r, y);
+    ctx.quadraticCurveTo(x + iw, y, x + iw, y + r);
+    ctx.lineTo(x + iw, y + ih - r);
+    ctx.quadraticCurveTo(x + iw, y + ih, x + iw - r, y + ih);
+    ctx.lineTo(x + r, y + ih);
+    ctx.quadraticCurveTo(x, y + ih, x, y + ih - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  ctx.save();
+  ctx.clip();
+
+  // Left half - blue gradient
+  const leftGrad = ctx.createLinearGradient(0, y, 0, y + ih);
+  leftGrad.addColorStop(0, '#5B9BD5');
+  leftGrad.addColorStop(1, '#3470A8');
+  ctx.fillStyle = leftGrad;
+  ctx.fillRect(x, y, Math.ceil(iw / 2), ih);
+
+  // Right half - teal/green gradient
+  const rightGrad = ctx.createLinearGradient(0, y, 0, y + ih);
+  rightGrad.addColorStop(0, '#4DB8B0');
+  rightGrad.addColorStop(1, '#2D8A83');
+  ctx.fillStyle = rightGrad;
+  ctx.fillRect(x + Math.floor(iw / 2), y, Math.ceil(iw / 2), ih);
+
+  // White divider
+  const divW = Math.max(1, Math.round(w * 0.025));
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(x + iw / 2 - divW / 2, y + ih * 0.15, divW, ih * 0.7);
+
+  ctx.restore();
+
+  // Text for 48px+
+  if (w >= 48) {
+    const fontSize = Math.round(w * 0.22);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `600 ${fontSize}px "Segoe UI", system-ui, -apple-system, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    // Slight optical adjustment for the Chinese character
+    ctx.fillText('A', x + iw * 0.25, y + ih * 0.5 + w * 0.008);
+    ctx.fillText('文', x + iw * 0.75, y + ih * 0.5 + w * 0.008);
+  }
+
+  // Exchange arrows at bottom for 128px
+  if (w >= 128) {
+    const arrowSize = Math.round(w * 0.08);
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = `${arrowSize}px system-ui`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⇄', x + iw * 0.5, y + ih * 0.86);
+  }
+}
+
+function downloadCanvas(canvas, filename) {
+  return new Promise(resolve => {
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setTimeout(resolve, 150);
+    });
+  });
+}
+
+async function downloadAll() {
+  const sizes = [
+    { id: 'c16', size: 16, file: 'icon16.png' },
+    { id: 'c48', size: 48, file: 'icon48.png' },
+    { id: 'c128', size: 128, file: 'icon128.png' }
+  ];
+  for (const { id, size, file } of sizes) {
+    const canvas = document.getElementById(id);
+    drawIcon(canvas.getContext('2d'), size, size);
+    await downloadCanvas(canvas, file);
+  }
+}
+
+// Preview on load
+window.onload = () => {
+  drawIcon(document.getElementById('c16').getContext('2d'), 16, 16);
+  drawIcon(document.getElementById('c48').getContext('2d'), 48, 48);
+  drawIcon(document.getElementById('c128').getContext('2d'), 128, 128);
+};
+</script>
+</body>
+</html>

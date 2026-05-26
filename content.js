@@ -27,7 +27,8 @@
       targetLang: 'zh-CN',
       layout: 'horizontal',
       translatedFirst: true,
-      splitRatio: 50
+      splitRatio: 50,
+      scrollSync: false
     };
 
     chrome.runtime.onMessage.addListener((msg) => {
@@ -46,6 +47,7 @@
     function handleScrollMessage(event) {
       if (event.data.type !== '__tsv_scroll') return;
       if (syncLock) return;
+      if (!prefs.scrollSync) return;
 
       const sourceWindow = event.source;
       const otherIframe = (sourceWindow === leftIframe?.contentWindow) ? rightIframe : leftIframe;
@@ -231,7 +233,10 @@
   // ============================================================
   // 子框架实现
   // ============================================================
-  function initChildFrame() {
+  async function initChildFrame() {
+    const { scrollSync } = await chrome.storage.sync.get({ scrollSync: false });
+    if (!scrollSync) return;
+
     let lastPct = -1;
     let scrollTimer = null;
     let setScrollLock = false;
