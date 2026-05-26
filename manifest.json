@@ -3,7 +3,7 @@
   "name": "Translation Split View",
   "version": "1.0.0",
   "description": "Side-by-side view of Google Translate and original page with synchronized scrolling",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "declarativeNetRequest", "scripting"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
